@@ -4,26 +4,29 @@ server:
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-      globalcors:
-        cors-configurations:
-          "[/**]":
-            allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-              - PATCH
-            allowedHeaders: "*"
-            allowCredentials: false
-            maxAge: 3600
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+              
+          globalcors:
+            cors-configurations:
+              "[/**]":
+                allowedOrigins: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                  - PATCH
+                allowedHeaders: "*"
+                allowCredentials: false
+                maxAge: 3600
   data:
     redis:
       host: localhost
@@ -102,27 +105,13 @@ management:
     health:
       show-details: always
     gateway:
-      enabled: true
+      enabled: read-only
 
 logging:
   level:
     root: INFO
-    com.nttdata: DEBUG
+    com.finnova: DEBUG
     org.springframework.cloud.gateway: DEBUG
     reactor.netty: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
----
-spring:
-  config:
-    activate:
-      on-profile: docker
-  data:
-    redis:
-      host: redis
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://eureka-server:8761/eureka/
