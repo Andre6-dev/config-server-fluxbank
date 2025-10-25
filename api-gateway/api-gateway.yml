@@ -12,7 +12,7 @@ spring:
             locator:
               enabled: true
               lower-case-service-id: true
-              
+
           globalcors:
             cors-configurations:
               "[/**]":
@@ -105,7 +105,7 @@ management:
     health:
       show-details: always
     gateway:
-      enabled: read-only
+      enabled: true
 
 logging:
   level:
