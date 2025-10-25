@@ -105,7 +105,7 @@ management:
     health:
       show-details: always
     gateway:
-      enabled: true
+      access: READ
 
 logging:
   level:
