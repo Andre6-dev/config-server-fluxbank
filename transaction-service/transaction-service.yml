@@ -1,0 +1,83 @@
+server:
+  port: 8084
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://devandre:passw0rd1@localhost:27017/transaction_db?authSource=admin
+      auto-index-creation: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    consumer:
+      group-id: transaction-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+# Eureka Client
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.application.name}:${random.value}
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+      customerService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+
+  timelimiter:
+    instances:
+      productService:
+        timeoutDuration: 2s
+      customerService:
+        timeoutDuration: 2s
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# Logging
+logging:
+  level:
+    com.nttdata.transactionservice: DEBUG
+    org.springframework.web: INFO
+    org.springframework.kafka: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
