@@ -32,6 +32,12 @@ eureka:
     preferIpAddress: true
     instance-id: ${spring.application.name}:${random.value}
 
+services:
+  gateway:
+    url: ${GATEWAY_URL:http://localhost:8080}
+  products-service:
+    url: ${PRODUCTS_SERVICE_URL:${services.gateway.url}/api}
+
 # Resilience4j Circuit Breaker
 resilience4j:
   circuitbreaker:
