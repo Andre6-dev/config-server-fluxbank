@@ -33,9 +33,9 @@ services:
   gateway:
     url: ${GATEWAY_URL:http://localhost:8080}
   products-service:
-    url: ${PRODUCTS_SERVICE_URL:${services.gateway.url}/api}
+    url: ${PRODUCTS_SERVICE_URL:http://products-service}
   transaction-service:
-    url: ${TRANSACTION_SERVICE_URL:${services.gateway.url}/api}
+    url: ${TRANSACTION_SERVICE_URL:http://transaction-service}
 
 # Resilience4j Circuit Breaker
 resilience4j:
