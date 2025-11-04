@@ -1,33 +1,30 @@
 server:
-  port: 8086
+  port: 8087
 
 spring:
   application:
-    name: digital-wallet-service
+    name: report-service
 
-  data:
-    mongodb:
-      uri: mongodb://devandre:passw0rd1@localhost:27017/digital_wallet_db?authSource=admin
-      auto-index-creation: false
-
-  kafka:
-    bootstrap-servers: localhost:29092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: false
-
+# Eureka Client
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.application.name}:${random.value}
 
 services:
   gateway:
     url: ${GATEWAY_URL:http://localhost:8080}
   products-service:
     url: ${PRODUCTS_SERVICE_URL:http://products-service}
+  transaction-service:
+    url: ${TRANSACTION_SERVICE_URL:http://transaction-service}
+  customer-service:
+    url: ${CUSTOMER_SERVICE_URL:http://customer-service}
   card-service:
     url: ${CARD_SERVICE_URL:http://card-service}
 
@@ -35,6 +32,14 @@ services:
 resilience4j:
   circuitbreaker:
     instances:
+      customerService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
       productService:
         registerHealthIndicator: true
         slidingWindowSize: 10
@@ -44,6 +49,14 @@ resilience4j:
         waitDurationInOpenState: 5s
         failureRateThreshold: 50
       transactionService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+      cardService:
         registerHealthIndicator: true
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
@@ -54,9 +67,13 @@ resilience4j:
 
   timelimiter:
     instances:
+      customerService:
+        timeoutDuration: 2s
       productService:
         timeoutDuration: 2s
       transactionService:
+        timeoutDuration: 2s
+      cardService:
         timeoutDuration: 2s
 
 # Actuator
@@ -72,9 +89,8 @@ management:
 # Logging
 logging:
   level:
-    com.finnova.digital_wallet_service: DEBUG
+    com.nttdata.reportservice: DEBUG
     org.springframework.web: INFO
-    org.springframework.kafka: INFO
 
 # OpenAPI/Swagger
 springdoc:
