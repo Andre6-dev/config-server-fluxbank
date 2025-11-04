@@ -7,7 +7,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://devandre:passw0rd1@localhost:27017/card_db?authSource=admin
+      uri: mongodb://devandre:passw0rd1@localhost:27017/debit_card_db?authSource=admin
       auto-index-creation: false
 
   kafka:
