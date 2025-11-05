@@ -7,7 +7,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://devandre:passw0rd1@localhost:27017/digital_wallet_db?authSource=admin
+      uri: mongodb://devandre:passw0rd1@localhost:27017/bootcoin_db?authSource=admin
       auto-index-creation: false
 
   kafka:
